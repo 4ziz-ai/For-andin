@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Untuk Seseorang yang Pernah Ada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        #video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 800px;
+            text-align: center;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            color: #ff6b6b;
+            text-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        .message-box {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .message {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            min-height: 60px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s, transform 0.8s;
+        }
+
+        .message.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            margin-top: 20px;
+            color: #ff6b6b;
+        }
+
+        #music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 20px;
+            background: #ff6b6b;
+            margin-left: 5px;
+            animation: blink 0.7s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Confetti & Particles */
+        .particle {
+            position: absolute;
+            background: rgba(255, 107, 107, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .message { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Video -->
+    <video id="video-bg" autoplay muted loop>
+        <source src="romantis.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <h1>Dari aziz untuk andini....</h1>
+        
+        <div class="message-box">
+            <div class="message" id="msg1"></div>
+            <div class="message" id="msg2"></div>
+            <div class="message" id="msg3"></div>
+            <div class="message" id="msg4"></div>
+            <div class="message" id="msg5"></div>
+        </div>
+
+        <div class="signature" id="signature"></div>
+    </div>
+
+    <!-- Music Control -->
+    <button id="music-control">🎵</button>
+
+    <!-- Audio -->
+    <audio id="bg-music" loop>
+        <source src="lesung.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Messages to display (typewriter effect)
+            const messages = [
+                "Sudah satu tahun berlalu sejak kita berpisah...",
+                "Aku ingin mengakui dengan jujur, kesalahan terbesar ada padaku.",
+                "Egoisku saat itu menyakiti hatimu dan merusak sesuatu yang seharusnya indah.",
+                "Maafkan aku, untuk semua yang tak sempat kuucapkan dulu.",
+                "Semoga kau sekarang bahagia, dengan seseorang yang lebih baik dariku.",
+                "aku minta maaf telah membuatmu sakit dan aku juga akan mengerti bila kamu telah menemukan jalan yang terbaik ",
+            ];
+
+            const signature = "Dulu, Aku yang Salah AZIZ";
+
+            // Typewriter effect
+            function typeWriter(element, text, speed, callback) {
+                let i = 0;
+                element.innerHTML = '';
+                const typing = setInterval(() => {
+                    if (i < text.length) {
+                        element.innerHTML += text.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(typing);
+                        if (callback) callback();
+                    }
+                }, speed);
+            }
+
+            // Show messages one by one
+            function showMessages(index) {
+                if (index < messages.length) {
+                    const msgElement = document.getElementById(`msg${index + 1}`);
+                    msgElement.style.display = 'block';
+                    
+                    typeWriter(msgElement, messages[index], 50, () => {
+                        msgElement.classList.add('visible');
+                        setTimeout(() => showMessages(index + 1), 1500);
+                    });
+                } else {
+                    // Show signature
+                    typeWriter(document.getElementById('signature'), signature, 70);
+                    createParticles(); // Start particle effect
+                }
+            }
+
+            // Start showing messages after 1 second
+            setTimeout(() => showMessages(0), 1000);
+
+            // Background Music Control
+            const music = document.getElementById('bg-music');
+            const musicControl = document.getElementById('music-control');
+            let isMusicPlaying = false;
+
+            musicControl.addEventListener('click', () => {
+                if (isMusicPlaying) {
+                    music.pause();
+                    musicControl.textContent = '🔇';
+                } else {
+                    music.play();
+                    musicControl.textContent = '🎵';
+                }
+                isMusicPlaying = !isMusicPlaying;
+            });
+
+            // Particle Effect
+            function createParticles() {
+                const colors = ['#ff6b6b', '#ffb8b8', '#ffd3b6', '#dcedc1', '#a8e6cf'];
+                
+                for (let i = 0; i < 100; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('particle');
+                    
+                    // Random properties
+                    const size = Math.random() * 10 + 5;
+                    const posX = Math.random() * window.innerWidth;
+                    const posY = Math.random() * window.innerHeight;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const duration = Math.random() * 10 + 5;
+                    const delay = Math.random() * 5;
+                    
+                    // Apply styles
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${posX}px`;
+                    particle.style.top = `${posY}px`;
+                    particle.style.background = color;
+                    particle.style.animation = `float ${duration}s ease-in-out ${delay}s infinite`;
+                    
+                    document.body.appendChild(particle);
+                }
+            }
+
+            // Add floating animation
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes float {
+                    0%, 100% { transform: translateY(0) rotate(0deg); }
+                    50% { transform: translateY(-50px) rotate(180deg); }
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html>
